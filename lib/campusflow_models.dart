@@ -1,8 +1,6 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// Modèles de données de l'application CampusFlow.
 library;
 
-export 'src/campusflow_models_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/models/course.dart';
+export 'src/models/task.dart';
+export 'src/models/user.dart';
