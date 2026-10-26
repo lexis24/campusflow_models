@@ -1,0 +1,24 @@
+# https://dart.dev/tools/private-files
+# Fichiers générés par les outils Dart / pub
+.dart_tool/
+.packages
+build/
+
+# Pour un package (bibliothèque), on ne versionne pas pubspec.lock
+# https://dart.dev/tools/pub/private-files#pubspec-lock
+pubspec.lock
+
+# Documentation générée par `dart doc`
+doc/api/
+
+# Rapports de couverture de tests
+coverage/
+
+# Fichiers des éditeurs / IDE
+.idea/
+*.iml
+.vscode/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
