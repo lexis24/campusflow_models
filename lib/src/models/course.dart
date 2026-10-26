@@ -1,3 +1,4 @@
+import 'json_utils.dart';
 import 'task.dart';
 
 /// Un cours suivi par l'étudiant, avec la liste de ses tâches.
@@ -13,6 +14,41 @@ class Course {
     required this.teacher,
     this.tasks = const [],
   });
+
+  /// Construit un cours depuis un JSON, y compris sa liste de tâches.
+  ///
+  /// `tasks` est facultatif (liste vide par défaut). Lance une
+  /// [FormatException] si un champ obligatoire manque ou a un mauvais type.
+  factory Course.fromJson(Map<String, dynamic> json) {
+    final rawTasks = json['tasks'] ?? const <dynamic>[];
+    if (rawTasks is! List) {
+      throw FormatException(
+        'Course.fromJson : le champ "tasks" doit être une liste, '
+        'mais a reçu ${rawTasks.runtimeType}.',
+      );
+    }
+    return Course(
+      id: readField<String>(json, 'id', 'Course'),
+      title: readField<String>(json, 'title', 'Course'),
+      teacher: readField<String>(json, 'teacher', 'Course'),
+      tasks: rawTasks.map((item) {
+        if (item is! Map<String, dynamic>) {
+          throw FormatException(
+            'Course.fromJson : chaque élément de "tasks" doit être un objet '
+            'JSON, mais a reçu ${item.runtimeType}.',
+          );
+        }
+        return Task.fromJson(item);
+      }).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'teacher': teacher,
+    'tasks': tasks.map((task) => task.toJson()).toList(),
+  };
 
   /// Renvoie un nouveau cours identique, sauf pour les champs fournis.
   Course copyWith({

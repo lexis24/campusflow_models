@@ -1,24 +1,29 @@
 import 'package:campusflow_models/campusflow_models.dart';
 
-void main() {
-  const user = User(id: 'u1', name: 'Alex', email: 'alex@campus.fr');
+Future<void> main() async {
+  const repository = CampusRepository();
 
-  final task = Task(
-    id: 't1',
-    title: 'TP Dart',
-    description: 'Créer les modèles CampusFlow',
-    dueDate: DateTime(2026, 11, 2),
-    courseId: 'c1',
-  );
+  print('Chargement des données...');
 
-  final course = Course(
-    id: 'c1',
-    title: 'Développement mobile',
-    teacher: 'M. Martin',
-    tasks: [task],
-  );
+  // Les deux appels sont indépendants : on les lance en parallèle
+  // (environ 1 seconde au total au lieu de 2).
+  final userFuture = repository.fetchUser();
+  final coursesFuture = repository.fetchCourses();
+  final user = await userFuture;
+  final courses = await coursesFuture;
 
-  print(user);
-  print(course);
-  print(task.copyWith(done: true));
+  print('\nBonjour ${user.name} (${user.email}) !');
+
+  for (final course in courses) {
+    print('\n${course.title} — ${course.teacher}');
+    for (final task in course.tasks) {
+      final check = task.done ? 'x' : ' ';
+      final date = task.dueDate.toIso8601String().substring(0, 10);
+      print('  [$check] ${task.title} (pour le $date)');
+    }
+  }
+
+  final tasks = await repository.fetchTasks();
+  final remaining = tasks.where((task) => !task.done).length;
+  print('\n$remaining tâche(s) restante(s) sur ${tasks.length}.');
 }
